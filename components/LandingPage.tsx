@@ -202,7 +202,11 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative flex h-dvh min-h-screen flex-col overflow-hidden bg-background text-foreground">
+    <div
+  className={`relative flex h-dvh min-h-screen flex-col overflow-hidden text-foreground ${
+    showConversation ? 'bg-background' : 'bg-[#05090d]'
+  }`}
+>
       {/* Hero shell: either shows the pre-call CTA or swaps in the live conversation experience. */}
       <div
         className={`flex min-h-0 flex-1 flex-col ${

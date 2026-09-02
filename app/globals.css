@@ -2,52 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme (default). Dark tokens apply when the OS prefers dark mode. */
+/* =========================================================
+   SALES PILOT AI — GLOBAL THEME
+   ========================================================= */
+
 :root {
   color-scheme: light;
 
-  /* --- Agora light token set --- */
-
   /* Backgrounds */
-  --background:       220 20% 98%;
-  --surface:          220 18% 96%;
+  --background: 220 20% 98%;
+  --surface: 220 18% 96%;
   --surface-elevated: 220 16% 94%;
 
-  /* Semantic surface aliases */
-  --card:             0 0% 100%;
-  --card-foreground:  220 25% 12%;
-  --popover:          0 0% 100%;
+  /* Cards */
+  --card: 0 0% 100%;
+  --card-foreground: 220 25% 12%;
+
+  /* Popovers */
+  --popover: 0 0% 100%;
   --popover-foreground: 220 25% 12%;
-  --muted:            220 14% 94%;
 
-  /* Borders / inputs */
-  --border:           220 13% 88%;
-  --input:            220 13% 88%;
-
-  /* Foreground */
-  --foreground:       220 25% 12%;
+  /* Muted */
+  --muted: 220 14% 94%;
   --muted-foreground: 220 10% 42%;
 
-  /* Brand — Agora cyan */
-  --primary:            194 100% 42%;
+  /* Borders / Inputs */
+  --border: 220 13% 88%;
+  --input: 220 13% 88%;
+
+  /* Text */
+  --foreground: 220 25% 12%;
+
+  /* Agora Cyan */
+  --primary: 194 100% 42%;
   --primary-foreground: 220 25% 12%;
 
-  /* Secondary — quiet surface-level control */
-  --secondary:            220 14% 94%;
+  /* Secondary */
+  --secondary: 220 14% 94%;
   --secondary-foreground: 220 25% 12%;
 
-  /* Accent — same hue as primary */
-  --accent:            194 100% 42%;
+  /* Accent */
+  --accent: 194 100% 42%;
   --accent-foreground: 220 25% 12%;
 
-  /* Destructive — end call, error states only */
-  --destructive:            0 72% 52%;
+  /* Destructive */
+  --destructive: 0 72% 52%;
   --destructive-foreground: 0 0% 100%;
 
-  /* Focus ring */
+  /* Focus */
   --ring: 194 100% 42%;
 
-  /* Radius base (8px) */
+  /* Radius */
   --radius: 0.5rem;
 
   /* Charts */
@@ -58,98 +63,174 @@
   --chart-5: 150 50% 40%;
 
   /* Sidebar */
-  --sidebar-background:         0 0% 100%;
-  --sidebar-foreground:         220 25% 12%;
-  --sidebar-primary:            194 100% 42%;
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 220 25% 12%;
+  --sidebar-primary: 194 100% 42%;
   --sidebar-primary-foreground: 220 25% 12%;
-  --sidebar-accent:             220 14% 94%;
-  --sidebar-accent-foreground:  220 25% 12%;
-  --sidebar-border:             220 13% 88%;
-  --sidebar-ring:               194 100% 42%;
+  --sidebar-accent: 220 14% 94%;
+  --sidebar-accent-foreground: 220 25% 12%;
+  --sidebar-border: 220 13% 88%;
+  --sidebar-ring: 194 100% 42%;
 
-  /*
-   * AgentVisualizer: same order as dark — cool/primary at bar bottom, soft mid, purple at top.
-   * Light: blue ≈ cyan role; dark: overridden below (cyan → soft → purple).
-   */
+  /* Visualizer */
   --viz-stop-1: 225 92% 50%;
   --viz-stop-2: 220 14% 78%;
   --viz-stop-3: 285 58% 48%;
 
   /* Font */
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
 
-    /* --- Agora dark token set --- */
-
-    --background:       220 14% 5%;
-    --surface:          220 12% 9%;
+    /* Backgrounds */
+    --background: 220 14% 5%;
+    --surface: 220 12% 9%;
     --surface-elevated: 220 10% 13%;
 
-    --card:             220 12% 9%;
-    --card-foreground:  220 15% 95%;
-    --popover:          220 10% 13%;
+    /* Cards */
+    --card: 220 12% 9%;
+    --card-foreground: 220 15% 95%;
+
+    /* Popovers */
+    --popover: 220 10% 13%;
     --popover-foreground: 220 15% 95%;
-    --muted:            220 12% 9%;
 
-    --border:           220 10% 18%;
-    --input:            220 10% 18%;
-
-    --foreground:       220 15% 95%;
+    /* Muted */
+    --muted: 220 12% 9%;
     --muted-foreground: 220 10% 50%;
 
-    --primary:            194 100% 50%;
+    /* Borders / Inputs */
+    --border: 220 10% 18%;
+    --input: 220 10% 18%;
+
+    /* Text */
+    --foreground: 220 15% 95%;
+
+    /* Agora Cyan */
+    --primary: 194 100% 50%;
     --primary-foreground: 220 14% 5%;
 
-    --secondary:            220 10% 13%;
+    /* Secondary */
+    --secondary: 220 10% 13%;
     --secondary-foreground: 220 15% 95%;
 
-    --accent:            194 100% 50%;
+    /* Accent */
+    --accent: 194 100% 50%;
     --accent-foreground: 220 14% 5%;
 
-    --destructive:            0 72% 58%;
+    /* Destructive */
+    --destructive: 0 72% 58%;
     --destructive-foreground: 0 0% 100%;
 
+    /* Focus */
     --ring: 194 100% 50%;
 
+    /* Charts */
     --chart-1: 194 100% 50%;
     --chart-2: 220 10% 60%;
     --chart-3: 220 10% 40%;
     --chart-4: 0 72% 58%;
     --chart-5: 150 60% 45%;
 
-    --sidebar-background:         220 12% 9%;
-    --sidebar-foreground:         220 15% 95%;
-    --sidebar-primary:            194 100% 50%;
+    /* Sidebar */
+    --sidebar-background: 220 12% 9%;
+    --sidebar-foreground: 220 15% 95%;
+    --sidebar-primary: 194 100% 50%;
     --sidebar-primary-foreground: 220 14% 5%;
-    --sidebar-accent:             220 10% 13%;
-    --sidebar-accent-foreground:  220 15% 95%;
-    --sidebar-border:             220 10% 18%;
-    --sidebar-ring:               194 100% 50%;
+    --sidebar-accent: 220 10% 13%;
+    --sidebar-accent-foreground: 220 15% 95%;
+    --sidebar-border: 220 10% 18%;
+    --sidebar-ring: 194 100% 50%;
 
-    /* Agent visualizer accent ramp used by the current conversation UI. */
+    /* Visualizer */
     --viz-stop-1: 194 100% 58%;
     --viz-stop-2: 215 42% 72%;
     --viz-stop-3: 272 62% 72%;
   }
 }
 
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
 body {
   font-family: var(--font-sans);
   color: hsl(var(--foreground));
   background-color: hsl(var(--background));
+
+  /*
+   * Prevent the browser from showing a bright white
+   * scrollbar track around the SalesPilot UI.
+   */
+  scrollbar-color: #3a4248 #080c0e;
+  scrollbar-width: thin;
 }
 
-/* --- Entry animations --- */
+
+/* =========================================================
+   GLOBAL DARK SCROLLBAR
+   ========================================================= */
+
+/*
+ * Chrome / Edge / Safari
+ * Makes the scrollbar match the dark SalesPilot interface.
+ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080c0e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #303a40;
+  border-radius: 9999px;
+  border: 2px solid #080c0e;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #46535b;
+}
+
+::-webkit-scrollbar-corner {
+  background: #080c0e;
+}
+
+
+/* =========================================================
+   ENTRY ANIMATIONS
+   ========================================================= */
 
 @keyframes fade-up {
   from {
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -160,34 +241,56 @@ body {
   animation: fade-up 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.animate-fade-up-d1 { animation-delay: 60ms; }
-.animate-fade-up-d2 { animation-delay: 120ms; }
-.animate-fade-up-d3 { animation-delay: 180ms; }
+.animate-fade-up-d1 {
+  animation-delay: 60ms;
+}
 
-/* --- MicButtonWithVisualizer: force a true circle ---
-   The parent flex can stretch the <button> unevenly. */
+.animate-fade-up-d2 {
+  animation-delay: 120ms;
+}
+
+.animate-fade-up-d3 {
+  animation-delay: 180ms;
+}
+
+
+/* =========================================================
+   MIC BUTTON
+   ========================================================= */
+
 .conversation-mic-host {
   flex-shrink: 0;
 }
+
 .conversation-mic-host > button {
   aspect-ratio: 1 / 1;
+
   width: 3rem;
   height: 3rem;
+
   min-width: 3rem;
   min-height: 3rem;
+
   max-width: 3rem;
   max-height: 3rem;
+
   border-radius: 9999px;
+
   padding: 0;
+
   box-sizing: border-box;
-  overflow: visible; /* Web Audio bar visualizer in bottom band; avoid clipping */
+
+  overflow: visible;
 }
+
 @media (min-width: 640px) {
   .conversation-mic-host > button {
     width: 3.5rem;
     height: 3.5rem;
+
     min-width: 3.5rem;
     min-height: 3.5rem;
+
     max-width: 3.5rem;
     max-height: 3.5rem;
   }

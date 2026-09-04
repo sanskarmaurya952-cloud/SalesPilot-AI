@@ -1,25 +1,25 @@
 # 🚀 SalesPilot AI
 
-### The AI Sales Rep That Changes Strategy Mid-Call.
+### **The AI Sales Rep That Changes Strategy Mid-Call.**
 
-> SalesPilot AI is a real-time, context-aware, agentic voice sales representative that doesn't follow a fixed script. It continuously understands the customer's state, adapts its sales strategy, selects the right tool, takes action, verifies the outcome, updates customer memory, and replans the conversation in real time.
+> **SalesPilot AI** is a real-time, context-aware, agentic voice sales representative that doesn't follow a fixed script. It continuously understands the customer's state, adapts its sales strategy, selects the right tool, takes action, verifies the outcome, updates customer memory, and replans the conversation in real time.
 
 ---
 
 ## 🎯 The Problem
 
-Traditional AI sales agents are mostly reactive conversational bots.
+Traditional AI sales agents are mostly **reactive conversational bots**.
 
 They can:
 
-- Answer customer questions
-- Follow predefined prompts
-- Retrieve product information
-- Generate conversational responses
+* Answer customer questions
+* Follow predefined prompts
+* Retrieve product information
+* Generate conversational responses
 
-But real sales conversations are not linear.
+But **real sales conversations are not linear.**
 
-A customer can move from:
+A customer can move through:
 
 **Interest → Price Objection → Competitor Comparison → Trust → Demo Request**
 
@@ -27,11 +27,11 @@ within a single conversation.
 
 A fixed script or simple chatbot struggles to recognize these transitions and change its strategy accordingly.
 
-### The real challenge isn't:
+### The Real Challenge Isn't:
 
-> "Can AI talk to a customer?"
+> **"Can AI talk to a customer?"**
 
-### It is:
+### It Is:
 
 > **"Can AI understand what changed in the customer's mind and decide what to do next?"**
 
@@ -43,39 +43,46 @@ A fixed script or simple chatbot struggles to recognize these transitions and ch
 
 SalesPilot is an **agentic AI sales representative** designed to dynamically adapt its strategy during a live conversation.
 
-Instead of:
+Instead of a simple:
 
 ```text
 Customer → AI → Response
+```
 
 SalesPilot operates as a continuous decision loop:
+
+```text
 Customer Voice
       ↓
-Observe
+   Observe
       ↓
 Build Customer State
       ↓
-Choose Sales Goal
+ Choose Sales Goal
       ↓
-Select Strategy
+ Select Strategy
       ↓
-Select Tool
+   Select Tool
       ↓
-Take Action
+   Take Action
       ↓
-Verify Result
+  Verify Result
       ↓
 Update Customer Memory
       ↓
-Re-plan
+    Re-plan
       ↺
+```
 
-🧠 What Makes SalesPilot Different?
+---
 
-The core innovation is our Agentic Sales Decision Engine.
+# 🧠 What Makes SalesPilot Different?
 
-SalesPilot continuously maintains a structured representation of the customer
+The core innovation is the **Agentic Sales Decision Engine**.
 
+SalesPilot continuously maintains a structured representation of the customer.
+
+```text
 Customer State
 │
 ├── Identity
@@ -103,48 +110,61 @@ Customer State
     ├── Last Customer Message
     ├── Last Action
     └── Action Result
+```
 
-    🔄 Adaptive Sales Intelligence
+---
 
-SalesPilot detects important signals throughout the conversation.
+# 🔄 Adaptive Sales Intelligence
 
-Customer Signal	Example	Agent Response
-💡 Need	"We need sales automation."	Discovery
-💰 Price Objection	"₹50,000 is too expensive."	ROI / Value Strategy
-🏢 Competition	"We already use another CRM."	Competitive Positioning
-🤔 Trust Concern	"How do I know this will work?"	Trust Building
-📚 Product Interest	"How does it work?"	Product Education
-🚀 Buying Intent	"I want to see a demo."	Move Toward Conversion
+SalesPilot detects important signals throughout the conversation and changes its strategy accordingly.
 
-The strategy changes during the call, not after it.
+| Customer Signal     | Example                         | Agent Response          |
+| ------------------- | ------------------------------- | ----------------------- |
+| 💡 Need             | "We need sales automation."     | Discovery               |
+| 💰 Price Objection  | "₹50,000 is too expensive."     | ROI / Value Strategy    |
+| 🏢 Competition      | "We already use another CRM."   | Competitive Positioning |
+| 🤔 Trust Concern    | "How do I know this will work?" | Trust Building          |
+| 📚 Product Interest | "How does it work?"             | Product Education       |
+| 🚀 Buying Intent    | "I want to see a demo."         | Move Toward Conversion  |
 
-🤖 The Agentic Decision Engine
+### The key difference:
 
-SalesPilot follows:
+> **The strategy changes during the call — not after it.**
 
+---
+
+# 🤖 The Agentic Decision Engine
+
+SalesPilot follows a continuous loop:
+
+```text
 Observe → Decide → Act → Verify → Remember → Re-plan
-1. 👁 Observe
+```
+
+### 1. 👁 Observe
 
 The agent receives the customer's latest message and conversation context.
 
-2. 🧠 Build State
+### 2. 🧠 Build State
 
 The state engine updates:
 
-Customer profile
-Intent
-Sentiment
-Buying stage
-Lead score
-Objections
-Needs
-Preferences
-3. 🎯 Choose Goal
+* Customer profile
+* Intent
+* Sentiment
+* Buying stage
+* Lead score
+* Objections
+* Needs
+* Preferences
+
+### 3. 🎯 Choose Goal
 
 SalesPilot decides what it should accomplish next.
 
 Possible goals include:
 
+```text
 DISCOVER_NEED
 UNDERSTAND_CUSTOMER
 BUILD_VALUE
@@ -156,9 +176,13 @@ QUALIFY_LEAD
 MOVE_TO_DECISION
 BOOK_DEMO
 FOLLOW_UP
-4. 🧩 Select Strategy
+```
+
+### 4. 🧩 Select Strategy
 
 The agent chooses an appropriate sales strategy:
+
+```text
 DISCOVERY
 VALUE
 PRICE_OBJECTION
@@ -166,19 +190,27 @@ COMPETITION
 PRODUCT_EDUCATION
 TRUST
 DECISION
-5. 🛠 Select Tool
+```
+
+### 5. 🛠 Select Tool
 
 Depending on the goal, SalesPilot can select:
+
+```text
 PRODUCT_KNOWLEDGE
 ROI_CALCULATOR
 CRM
 CALENDAR
 FOLLOW_UP
-6. ⚡ Take Action
+```
+
+### 6. ⚡ Take Action
 
 The selected action is executed.
 
-For example:
+**Example:**
+
+```text
 Customer:
 "₹50,000 is too expensive."
 
@@ -201,12 +233,15 @@ ROI_CALCULATOR
 
 Action:
 Demonstrate potential ROI
-7. ✅ Verify
+```
+
+### 7. ✅ Verify
 
 SalesPilot does not blindly assume that an action succeeded.
 
-It verifies the action result.
+It verifies the action result:
 
+```text
 Action
   ↓
 Result
@@ -214,9 +249,13 @@ Result
 Verification
   ↓
 SUCCESS / FAILED
-8. 🔁 Re-plan
+```
+
+### 8. 🔁 Re-plan
 
 If an action fails or the customer's state changes, SalesPilot can choose a new path.
+
+```text
 FAILED
   ↓
 RECOVERY
@@ -224,12 +263,17 @@ RECOVERY
 NEW GOAL
   ↓
 NEW STRATEGY
+```
 
-🎙️ Why Agora?
+---
+
+# 🎙️ Why Agora?
 
 Real-time conversation is the foundation of SalesPilot.
 
-We use Agora Conversational AI as the real-time interaction layer connecting the customer with the AI sales agent.
+We use **Agora Conversational AI** as the real-time interaction layer connecting the customer with the AI sales agent.
+
+```text
 Customer Voice
       ↓
 Agora Real-Time Layer
@@ -247,29 +291,29 @@ Text-to-Speech
 Agora
       ↓
 Customer
-Agora powers the real-time conversational experience, while SalesPilot's intelligence layer determines what the agent should actually do next.
+```
 
-Separation of responsibilities
+### Separation of Responsibilities
 
-Agora
+| Agora                         | SalesPilot                 |
+| ----------------------------- | -------------------------- |
+| Real-time voice communication | Customer understanding     |
+| Conversational AI transport   | Sales intelligence         |
+| Speech interaction            | Decision making            |
+|                               | Strategy selection         |
+|                               | Tool selection             |
+|                               | Action execution           |
+|                               | Verification               |
+|                               | Re-planning                |
+|                               | Persistent customer memory |
 
-Real-time voice communication
-Conversational AI transport
-Speech interaction
+> **Agora powers the real-time conversational experience, while SalesPilot's intelligence layer determines what the agent should actually do next.**
 
-SalesPilot
+---
 
-Customer understanding
-Sales intelligence
-Decision making
-Strategy selection
-Tool selection
-Action execution
-Verification
-Re-planning
-Persistent customer memory
+# 🏗️ System Architecture
 
-🏗️ System Architecture
+```text
                     ┌────────────────────┐
                     │     CUSTOMER       │
                     │   Voice / Speech   │
@@ -317,33 +361,39 @@ Persistent customer memory
               │  Re-plan                     │
               └──────────────┬───────────────┘
                              │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-       Product Knowledge   ROI/CRM      Calendar
-              │              │              │
-              └──────────────┼──────────────┘
+                 ┌───────────┼───────────┐
+                 ▼           ▼           ▼
+          Product        ROI / CRM    Calendar
+          Knowledge
+                 │           │           │
+                 └───────────┼───────────┘
                              ▼
-                     ┌───────────────┐
-                     │   LLM SALES   │
-                     │     BRAIN     │
-                     └───────┬───────┘
-                             │
-                             ▼
-                            TTS
-                             │
-                             ▼
+                    ┌───────────────┐
+                    │   LLM SALES   │
+                    │     BRAIN     │
+                    └───────┬───────┘
+                            │
+                            ▼
+                           TTS
+                            │
+                            ▼
                           AGORA
-                             │
-                             ▼
+                            │
+                            ▼
                          CUSTOMER
+```
 
-🧠 Persistent Customer Memory
+---
+
+# 🧠 Persistent Customer Memory
 
 SalesPilot does not have to start from zero every time.
 
-Customer information is persisted using Supabase.
+Customer information is persisted using **Supabase**.
 
 Example:
+
+```json
 {
   "customer": "Rahul",
   "role": "Founder",
@@ -357,81 +407,104 @@ Example:
   "buying_stage": "Decision",
   "last_intent": "Interested"
 }
+```
 
-🎬 Example Conversation
-Customer
+This allows the agent to maintain context instead of treating every conversation as a completely new interaction.
 
-"Hi, I'm Rahul, founder of a startup. We need sales automation, but our budget is around ₹40,000."
+---
 
-SalesPilot extracts:
-🎬 Example Conversation
-Customer
+# 🎬 Example Conversation
 
-"Hi, I'm Rahul, founder of a startup. We need sales automation, but our budget is around ₹40,000."
+### 👤 Customer
 
-SalesPilot extracts:
+> "Hi, I'm Rahul, founder of a startup. We need sales automation, but our budget is around ₹40,000."
+
+### 🧠 SalesPilot Extracts
+
+```text
 Name   → Rahul
 Role   → Founder
 Need   → Sales Automation
 Budget → ₹40,000
+```
 
-Customer
+---
 
-"We already use another CRM. I'm not sure why we should switch."
+### 👤 Customer
 
-SalesPilot updates:
+> "We already use another CRM. I'm not sure why we should switch."
+
+### 🧠 SalesPilot Updates
+
+```text
 Objection → Existing Solution
 Strategy  → COMPETITION
 Goal      → UNDERSTAND_COMPETITION
 Tool      → CRM
+```
 
-Customer
+---
 
-"Actually, I really like to see a demo."
+### 👤 Customer
 
-SalesPilot recognizes the buying signal:
+> "Actually, I'd really like to see a demo."
+
+### 🧠 SalesPilot Recognizes the Buying Signal
+
+```text
 Intent        → Interested
 Buying Stage  → Decision
 Goal          → BOOK_DEMO
 Strategy      → DECISION
 Tool          → CALENDAR
+```
 
-The important part:
+### The important part:
 
-The AI doesn't continue asking generic discovery questions. It recognizes the buying signal and changes its objective.
+> **The AI doesn't continue asking generic discovery questions. It recognizes the buying signal and changes its objective.**
 
-📊 Sales Intelligence Dashboard
+---
+
+# 📊 Sales Intelligence Dashboard
 
 SalesPilot provides a live view of what the AI currently understands.
 
+```text
 ┌─────────────────────────────────────┐
 │        SALES INTELLIGENCE           │
 ├─────────────────────────────────────┤
 │ Intent:           Interested        │
 │ Sentiment:        Positive          │
 │ Objection:        None              │
-│ Buying Stage:     Decision           │
+│ Buying Stage:     Decision          │
 │ Lead Score:       85/100            │
 │ Next Best Action: Book Demo         │
 └─────────────────────────────────────┘
+```
 
-🔥 Core Innovation
+---
+
+# 🔥 Core Innovation
 
 Most conversational AI systems optimize for:
 
-"What should I say next?"
+> **"What should I say next?"**
 
 SalesPilot optimizes for:
 
-"What should I accomplish next?"
+> **"What should I accomplish next?"**
 
 That distinction changes the architecture.
 
-Instead of:
+### Traditional Approach
+
+```text
 Input → LLM → Response
+```
 
-SalesPilot uses:
+### SalesPilot Approach
 
+```text
 Input
   ↓
 Customer State
@@ -449,44 +522,60 @@ Verification
 Memory
   ↓
 Re-plan
+```
 
-The result
+### Result
 
-An AI sales agent that can adapt its strategy instead of merely generating replies.
+> **An AI sales agent that can adapt its strategy instead of merely generating replies.**
 
-🧰 Tech Stack
-Frontend
-Next.js
-React
-TypeScript
-Tailwind CSS
-Real-Time AI
-Agora Conversational AI
-Real-time voice communication
-Speech-to-Text
-LLM reasoning
-Text-to-Speech
-Intelligence Layer
-Sales Intelligence Engine
-Customer State Engine
-Goal Engine
-Strategy Selector
-Tool Selector
-Action Engine
-Verification Engine
-Replanner
-Memory
-Supabase
-PostgreSQL
-APIs
-Next.js API Routes
-Agora APIs
-Customer Memory API
-Sales Intelligence API
-Action APIs
+---
 
-📁 Project Structure
+# 🧰 Tech Stack
 
+### Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+
+### 🎙️ Real-Time AI
+
+* Agora Conversational AI
+* Real-time voice communication
+* Speech-to-Text
+* LLM reasoning
+* Text-to-Speech
+
+### 🧠 Intelligence Layer
+
+* Sales Intelligence Engine
+* Customer State Engine
+* Goal Engine
+* Strategy Selector
+* Tool Selector
+* Action Engine
+* Verification Engine
+* Replanner
+
+### 💾 Memory
+
+* Supabase
+* PostgreSQL
+
+### 🔌 APIs
+
+* Next.js API Routes
+* Agora APIs
+* Customer Memory API
+* Sales Intelligence API
+* Action APIs
+
+---
+
+# 📁 Project Structure
+
+```text
 SalesPilot-AI/
 │
 ├── app/
@@ -521,45 +610,57 @@ SalesPilot-AI/
 │   └── agora.ts
 │
 └── README.md
+```
 
+---
 
-🚀 Roadmap
-Phase 1 — MVP
- Real-time Agora conversation
- Sales intelligence
- Customer state tracking
- Persistent customer memory
- Agentic decision engine
- Goal selection
- Strategy selection
- Tool selection
- Action execution
- Action verification
- Re-planning
-Phase 2 — Production Integrations
- Real CRM integrations
- Real calendar booking
- Automated follow-ups
- Proposal generation
- Email / WhatsApp handoff
- Advanced lead scoring
-Phase 3 — Enterprise Intelligence
- Multi-agent sales teams
- Enterprise CRM synchronization
- Sales performance analytics
- Predictive conversion modeling
- Organization-wide customer intelligence
-🏆 Why SalesPilot?
+# 🚀 Roadmap
+
+## Phase 1 — MVP
+
+* [x] Real-time Agora conversation
+* [x] Sales intelligence
+* [x] Customer state tracking
+* [x] Persistent customer memory
+* [x] Agentic decision engine
+* [x] Goal selection
+* [x] Strategy selection
+* [x] Tool selection
+* [x] Action execution
+* [x] Action verification
+* [x] Re-planning
+
+## Phase 2 — Production Integrations
+
+* [ ] Real CRM integrations
+* [ ] Real calendar booking
+* [ ] Automated follow-ups
+* [ ] Proposal generation
+* [ ] Email / WhatsApp handoff
+* [ ] Advanced lead scoring
+
+## Phase 3 — Enterprise Intelligence
+
+* [ ] Multi-agent sales teams
+* [ ] Enterprise CRM synchronization
+* [ ] Sales performance analytics
+* [ ] Predictive conversion modeling
+* [ ] Organization-wide customer intelligence
+
+---
+
+# 🏆 Why SalesPilot?
 
 SalesPilot is built around a simple idea:
 
-The future of AI sales isn't scripted automation. It's adaptive decision-making.
+> **The future of AI sales isn't scripted automation. It's adaptive decision-making.**
 
 A customer can change their mind within seconds.
 
-SalesPilot is designed to change with them.
+**SalesPilot is designed to change with them.**
 
-  LISTEN
+```text
+LISTEN
    ↓
 UNDERSTAND
    ↓
@@ -572,31 +673,52 @@ VERIFY
 REMEMBER
    ↓
 ADAPT
+```
 
-🌟 Vision
+---
 
-We envision AI sales agents that behave less like chatbots and more like intelligent sales professionals.
+# 🌟 Vision
+
+We envision AI sales agents that behave less like chatbots and more like **intelligent sales professionals**.
 
 Agents that can:
 
-Understand customers
-Remember previous interactions
-Detect objections
-Recognize buying signals
-Change strategy in real time
-Take meaningful actions
-Verify outcomes
-Continuously re-plan
-SalesPilot AI
+* Understand customers
+* Remember previous interactions
+* Detect objections
+* Recognize buying signals
+* Change strategy in real time
+* Take meaningful actions
+* Verify outcomes
+* Continuously re-plan
 
-Listen. Understand. Decide. Act. Adapt.
+### **SalesPilot AI**
 
-👥 Team
+> **Listen. Understand. Decide. Act. Adapt.**
 
-ALPHA++
+---
 
-Built for the next generation of intelligent sales automation.
+# 👥 Team
 
-⭐ Support the Project
+## ALPHA++
 
-If you find SalesPilot AI interesting, consider giving the repository a ⭐.
+**Built for the next generation of intelligent sales automation.**
+
+---
+
+# ⭐ Support the Project
+
+If you find **SalesPilot AI** interesting, consider giving the repository a ⭐.
+
+Every star helps us build the next generation of adaptive AI sales agents.
+
+---
+
+<div align="center">
+
+### 🚀 SalesPilot AI
+
+**Not just an AI that talks.
+An AI that understands, decides, acts, and adapts.**
+
+</div>

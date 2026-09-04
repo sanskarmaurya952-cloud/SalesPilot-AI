@@ -402,8 +402,12 @@ function extractCustomerProfile(transcript: string) {
 
 function analyzeSalesConversation(
   transcript: string,
+  latestCustomerMessage?: string,
 ): SalesIntelligence {
-  const text = transcript.toLowerCase();
+  const analysisText =
+    latestCustomerMessage?.trim() || transcript;
+
+  const text = analysisText.toLowerCase();
 
   // ---------------------------------------------------------
   // INTENT
@@ -581,53 +585,49 @@ function analyzeSalesConversation(
    */
 
   const objectionPatterns = [
-    {
-      type: 'Price / Budget',
-      pattern:
-        /expensive|too much|costly|price|pricing|budget|afford|₹|rs |rs\.|rupees|thousand|lakh/gi,
-    },
+  {
+    type: 'Price / Budget',
+    pattern:
+      /expensive|too much|costly|price|pricing|budget|afford|₹|rs |rs\.|rupees|thousand|lakh/gi,
+  },
 
-    {
-      type: 'Existing Solution / Competition',
-      pattern:
-        /competitor|competitors|alternative|already use|already using|existing solution|current solution|current crm|existing crm|another crm|using another crm|switch from|why should we switch/gi,
-    },
+  {
+    type: 'Existing Solution / Competition',
+    pattern:
+      /competitor|competitors|alternative|already use|already using|existing solution|current solution|current crm|existing crm|another crm|using another crm|switch from|why should we switch/gi,
+  },
 
-    {
-      type: 'Product Understanding',
-      pattern:
-        /don't understand|do not understand|how does it work|confused|explain|unclear/gi,
-    },
+  {
+    type: 'Product Understanding',
+    pattern:
+      /don't understand|do not understand|how does it work|confused|explain|unclear/gi,
+  },
 
-    {
-      type: 'Timing / Decision Delay',
-      pattern:
-        /not now|later|maybe later|think about it|need time|discuss internally|not ready/gi,
-    },
+  {
+    type: 'Timing / Decision Delay',
+    pattern:
+      /not now|later|maybe later|think about it|need time|discuss internally|not ready/gi,
+  },
 
-    {
-      type: 'Trust / Security',
-      pattern:
-        /trust|secure|security|privacy|safe|data protection|data/gi,
-    },
-  ];
+  {
+    type: 'Trust / Security',
+    pattern:
+      /trust|secure|security|privacy|safe|data protection|data/gi,
+  },
+];
 
-  let objection: string | null = null;
-  let latestObjectionIndex = -1;
+let objection: string | null = null;
 
-  for (const item of objectionPatterns) {
-    let match: RegExpExecArray | null;
+for (const item of objectionPatterns) {
+  item.pattern.lastIndex = 0;
 
-    while (
-      (match = item.pattern.exec(text)) !== null
-    ) {
-      if (match.index > latestObjectionIndex) {
-        latestObjectionIndex = match.index;
-        objection = item.type;
-      }
-    }
+  const match = item.pattern.exec(text);
+
+  if (match) {
+    objection = item.type;
+    break;
   }
-
+}
   // ---------------------------------------------------------
   // BUYING STAGE
   // ---------------------------------------------------------
@@ -872,7 +872,10 @@ export async function POST(
   try {
     const body = await request.json();
 
-    const { transcript } = body;
+    const {
+  transcript,
+  latestCustomerMessage,
+} = body;
 
     if (
       !transcript ||
@@ -892,7 +895,10 @@ export async function POST(
     );
 
     const intelligence =
-      analyzeSalesConversation(transcript);
+  analyzeSalesConversation(
+    transcript,
+    latestCustomerMessage,
+  );
 
     return NextResponse.json({
       success: true,

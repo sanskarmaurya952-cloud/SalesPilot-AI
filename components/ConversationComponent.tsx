@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import AgoraRTC, {
   useRTCClient,
   useLocalMicrophoneTrack,
@@ -24,8 +30,10 @@ import {
 import { AgentVisualizer } from 'agora-agent-uikit';
 import { MicButtonWithVisualizer } from 'agora-agent-uikit/rtc';
 import { DEFAULT_AGENT_UID } from '@/lib/agora';
+
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
 import { CustomerMemoryPanel } from './CustomerMemoryPanel';
+
 import {
   getCurrentInProgressMessage,
   getMessageList,
@@ -33,19 +41,28 @@ import {
   normalizeTimestampMs,
   normalizeTranscript,
 } from '@/lib/conversation';
+
 import { MicrophoneSelector } from './MicrophoneSelector';
+
 import {
   getConversationIssueSeverity,
   type ConnectionIssue,
 } from './ConversationErrorCard';
+
 import { ConnectionStatusPanel } from './ConnectionStatusPanel';
 import { QuickstartConversationLayout } from './QuickstartConversationLayout';
+
 import {
   QuickstartPipelineMetrics,
   type QuickstartAgentMetric,
 } from './QuickstartPipelineMetrics';
+
 import { QuickstartTranscriptPanel } from './QuickstartTranscriptPanel';
+
 import type { ConversationComponentProps } from '@/types/conversation';
+
+import { runAgenticLoop } from '@/lib/agentic/agentic-loop';
+import type { AgenticLoopResult } from '@/lib/agentic/agentic-loop';
 
 const MAX_CONNECTION_ISSUES = 6;
 
@@ -99,7 +116,8 @@ function isRtmSalStatusPayload(
   return (
     !!value &&
     typeof value === 'object' &&
-    (value as { object?: unknown }).object === 'message.sal_status'
+    (value as { object?: unknown }).object ===
+      'message.sal_status'
   );
 }
 
@@ -113,7 +131,9 @@ export default function ConversationComponent({
   const remoteUsers = useRemoteUsers();
 
   const [isEnabled, setIsEnabled] = useState(true);
-  const [isAgentConnected, setIsAgentConnected] = useState(false);
+  const [isAgentConnected, setIsAgentConnected] =
+    useState(false);
+
   const [isConnectionDetailsOpen, setIsConnectionDetailsOpen] =
     useState(false);
 
@@ -121,10 +141,13 @@ export default function ConversationComponent({
     useState<string>('CONNECTING');
 
   const agentUID = String(DEFAULT_AGENT_UID);
+
   const [joinedUID, setJoinedUID] = useState<UID>(0);
 
   const [rawTranscript, setRawTranscript] = useState<
-    TranscriptHelperItem<Partial<UserTranscription | AgentTranscription>>[]
+    TranscriptHelperItem<
+      Partial<UserTranscription | AgentTranscription>
+    >[]
   >([]);
 
   const [agentState, setAgentState] =
@@ -135,30 +158,39 @@ export default function ConversationComponent({
   >([]);
 
   // Stable customer ID for the current conversation.
-  // agoraData.uid is available from the moment the conversation starts.
   const customerId = String(agoraData.uid);
 
   // SalesPilot AI intelligence state.
-  const [salesIntelligence, setSalesIntelligence] = useState<{
-    intent: string;
-    sentiment: string;
-    objection: string | null;
-    buyingStage: string;
-    leadScore: number;
-    nextBestAction: string;
-    customerProfile?: {
-      name?: string;
-      role?: string;
-      company?: string;
-      budget?: string;
-      needs: string[];
-      preferences: string[];
-    };
-  } | null>(null);
+  const [salesIntelligence, setSalesIntelligence] =
+    useState<{
+      intent: string;
+      sentiment: string;
+      objection: string | null;
+      buyingStage: string;
+      leadScore: number;
+      nextBestAction: string;
+      customerProfile?: {
+        name?: string;
+        role?: string;
+        company?: string;
+        budget?: string;
+        needs: string[];
+        preferences: string[];
+      };
+    } | null>(null);
 
-  // Customer Memory state.
-  const [customerMemory, setCustomerMemory] =
-    useState<CustomerMemory | null>(null);
+  // Persistent customer memory.
+ const [customerMemory, setCustomerMemory] =
+  useState<CustomerMemory | null>(null);
+
+const customerMemoryRef =
+  useRef<CustomerMemory | null>(null);
+
+const lastProcessedMessageRef =
+  useRef<string>('');
+  // Agentic decision loop result.
+  const [agenticResult, setAgenticResult] =
+    useState<AgenticLoopResult | null>(null);
 
   const [connectionIssues, setConnectionIssues] = useState<
     ConnectionIssue[]
@@ -502,14 +534,15 @@ export default function ConversationComponent({
 
         const data = await response.json();
 
-        if (data?.memory) {
-          setCustomerMemory(data.memory);
+       if (data?.memory) {
+  setCustomerMemory(data.memory);
+  customerMemoryRef.current = data.memory;
 
-          console.log(
-            '[SalesPilot] Customer memory loaded:',
-            data.memory,
-          );
-        }
+  console.log(
+    '[SalesPilot] Customer memory loaded:',
+    data.memory,
+  );
+}
       } catch (error) {
         console.error(
           '[SalesPilot] Customer memory loading error:',
@@ -521,174 +554,356 @@ export default function ConversationComponent({
     loadCustomerMemory();
   }, [customerId]);
 
-  // Analyze conversation + update persistent customer memory.
-  useEffect(() => {
-    if (messageList.length === 0) return;
+  // Analyze conversation + update memory + run agentic loop.
+  // Analyze conversation + update memory + run agentic loop.
+useEffect(() => {
+  if (messageList.length === 0) return;
 
-    const conversationText = messageList
-      .map((message) => {
-        const role =
-          String(message.uid) === customerId
-            ? 'Customer'
-            : 'SalesPilot';
+  const latestCustomerEntry = [...messageList]
+    .reverse()
+    .find(
+      (message) =>
+        String(message.uid) === customerId &&
+        Boolean(message.text?.trim()),
+    );
 
-        return `${role}: ${message.text}`;
-      })
-      .join('\n');
+  if (!latestCustomerEntry?.text?.trim()) {
+    return;
+  }
 
-    if (!conversationText.trim()) return;
+  const latestCustomerMessage =
+    latestCustomerEntry.text.trim();
+    console.log(
+  '[SalesPilot DEBUG] Latest customer message:',
+  latestCustomerMessage,
+);
 
-    const analyzeSalesConversation = async () => {
+console.log(
+  '[SalesPilot DEBUG] Customer ID:',
+  customerId,
+);
+
+console.log(
+  '[SalesPilot DEBUG] Message list:',
+  messageList,
+);
+
+  /*
+   * IMPORTANT:
+   * Only process when the latest CUSTOMER turn changes.
+   *
+   * Without this guard, every AI transcript update can
+   * re-run sales intelligence + the agentic loop using
+   * the same old customer message.
+   */
+  const messageKey = [
+    String(
+      (latestCustomerEntry as {
+        timestamp?: unknown;
+        ts?: unknown;
+        id?: unknown;
+      }).timestamp ??
+        (latestCustomerEntry as {
+          timestamp?: unknown;
+          ts?: unknown;
+          id?: unknown;
+        }).ts ??
+        (latestCustomerEntry as {
+          timestamp?: unknown;
+          ts?: unknown;
+          id?: unknown;
+        }).id ??
+        '',
+    ),
+    latestCustomerMessage,
+  ].join('|');
+
+  if (
+    lastProcessedMessageRef.current ===
+    messageKey
+  ) {
+    return;
+  }
+
+  lastProcessedMessageRef.current =
+    messageKey;
+
+  const conversationText = messageList
+    .map((message) => {
+      const role =
+        String(message.uid) === customerId
+          ? 'Customer'
+          : 'SalesPilot';
+
+      return `${role}: ${message.text}`;
+    })
+    .join('\n');
+
+  if (!conversationText.trim()) return;
+
+  const analyzeSalesConversation =
+  async () => {
+
+    console.log(
+      '[SalesPilot DEBUG] Sending intelligence request:',
+      {
+        transcript: conversationText,
+        latestCustomerMessage,
+      },
+    );
       try {
         const response = await fetch(
           '/api/sales-intelligence',
           {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type':
+                'application/json',
             },
             body: JSON.stringify({
-              transcript: conversationText,
+              transcript:
+                conversationText,
+              latestCustomerMessage,
             }),
           },
         );
 
         if (!response.ok) {
           console.error(
-            'Sales intelligence request failed:',
+            '[SalesPilot] Sales intelligence request failed:',
             await response.text(),
           );
+
           return;
         }
 
-        const data = await response.json();
+        const data =
+          await response.json();
 
-        if (data?.intelligence) {
-          const intelligence = data.intelligence;
+        if (!data?.intelligence) {
+          return;
+        }
 
-          setSalesIntelligence(intelligence);
+        const intelligence =
+          data.intelligence;
 
+        /*
+         * Ignore a stale response if another
+         * customer turn has already been processed.
+         */
+        if (
+          lastProcessedMessageRef.current !==
+          messageKey
+        ) {
           console.log(
-            '[SalesPilot] Full intelligence:',
-            intelligence,
+            '[SalesPilot] Ignoring stale intelligence response.',
           );
 
-          console.log(
-            '[SalesPilot] Customer profile:',
-            intelligence.customerProfile,
-          );
+          return;
+        }
 
-          const profile =
-            intelligence.customerProfile;
+        setSalesIntelligence(
+          intelligence,
+        );
 
-          const memoryUpdates = {
-            name: profile?.name,
-            role: profile?.role,
-            company: profile?.company,
-            budget: profile?.budget,
+        console.log(
+          '[SalesPilot] Full intelligence:',
+          intelligence,
+        );
 
-            needs: profile?.needs ?? [],
+        // ==================================================
+        // AGENTIC DECISION LOOP
+        // ==================================================
 
-            preferences:
-              profile?.preferences ?? [],
+        try {
+          const loopResult =
+            await runAgenticLoop({
+              customerId,
 
-            objections:
-              intelligence.objection
-                ? [intelligence.objection]
-                : [],
+              memory:
+                customerMemoryRef.current,
 
-            buyingStage:
-              intelligence.buyingStage,
+              intelligence,
 
-            lastIntent:
-              intelligence.intent,
+              lastCustomerMessage:
+                latestCustomerMessage,
 
-            lastSentiment:
-              intelligence.sentiment,
+              lastAgentAction:
+                customerMemoryRef.current
+                  ?.notes?.at(-1),
 
-            notes: [
-              `Lead Score: ${intelligence.leadScore}/100`,
-              `Next Best Action: ${intelligence.nextBestAction}`,
-            ],
-          };
+              lastActionResult:
+                undefined,
+            });
 
-          console.log(
-            '[SalesPilot] Memory update payload:',
-            memoryUpdates,
-          );
-
-          try {
-            if (
-              !customerId ||
-              customerId === 'undefined' ||
-              customerId === 'null'
-            ) {
-              console.warn(
-                '[SalesPilot] Skipping memory update because customer ID is invalid:',
-                customerId,
-              );
-
-              return;
-            }
-
-            const memoryResponse = await fetch(
-              '/api/customer-memory',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  customerId,
-                  ...memoryUpdates,
-                }),
-              },
-            );
-
-            if (!memoryResponse.ok) {
-              console.error(
-                '[SalesPilot] Customer memory update failed:',
-                await memoryResponse.text(),
-              );
-
-              return;
-            }
-
-            const memoryData =
-              await memoryResponse.json();
-
+          /*
+           * Do not allow an older customer turn
+           * to overwrite the current agentic state.
+           */
+          if (
+            lastProcessedMessageRef.current !==
+            messageKey
+          ) {
             console.log(
-              '[SalesPilot] Customer memory response:',
-              memoryData,
+              '[SalesPilot] Ignoring stale agentic result.',
             );
 
-            if (memoryData?.memory) {
-              setCustomerMemory(
-                memoryData.memory,
-              );
-            }
-          } catch (memoryError) {
-            console.error(
-              '[SalesPilot] Customer memory error:',
-              memoryError,
-            );
+            return;
           }
+
+          setAgenticResult(
+            loopResult,
+          );
+
+          console.log(
+            '[SalesPilot Agentic Loop] State:',
+            loopResult.state,
+          );
+
+          console.log(
+            '[SalesPilot Agentic Loop] Decision:',
+            loopResult.decision,
+          );
+
+          console.log(
+            '[SalesPilot Agentic Loop] Action:',
+            loopResult.action,
+          );
+
+          console.log(
+            '[SalesPilot Agentic Loop] Re-plan:',
+            loopResult.replan,
+          );
+        } catch (agenticError) {
+          console.error(
+            '[SalesPilot Agentic Loop] Error:',
+            agenticError,
+          );
+        }
+
+        const profile =
+          intelligence.customerProfile;
+
+        console.log(
+          '[SalesPilot] Customer profile:',
+          profile,
+        );
+
+        const memoryUpdates = {
+          name: profile?.name,
+          role: profile?.role,
+          company: profile?.company,
+          budget: profile?.budget,
+
+          needs:
+            profile?.needs ?? [],
+
+          preferences:
+            profile?.preferences ??
+            [],
+
+          objections:
+            intelligence.objection
+              ? [intelligence.objection]
+              : [],
+
+          buyingStage:
+            intelligence.buyingStage,
+
+          lastIntent:
+            intelligence.intent,
+
+          lastSentiment:
+            intelligence.sentiment,
+
+          notes: [
+            `Lead Score: ${intelligence.leadScore}/100`,
+            `Next Best Action: ${intelligence.nextBestAction}`,
+          ],
+        };
+
+        console.log(
+          '[SalesPilot] Memory update payload:',
+          memoryUpdates,
+        );
+
+        if (
+          !customerId ||
+          customerId === 'undefined' ||
+          customerId === 'null'
+        ) {
+          console.warn(
+            '[SalesPilot] Invalid customer ID. Skipping memory update:',
+            customerId,
+          );
+
+          return;
+        }
+
+        const memoryResponse =
+          await fetch(
+            '/api/customer-memory',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type':
+                  'application/json',
+              },
+              body: JSON.stringify({
+                customerId,
+                ...memoryUpdates,
+              }),
+            },
+          );
+
+        if (!memoryResponse.ok) {
+          console.error(
+            '[SalesPilot] Customer memory update failed:',
+            await memoryResponse.text(),
+          );
+
+          return;
+        }
+
+        const memoryData =
+          await memoryResponse.json();
+
+        console.log(
+          '[SalesPilot] Customer memory response:',
+          memoryData,
+        );
+
+        if (
+          memoryData?.memory &&
+          lastProcessedMessageRef.current ===
+            messageKey
+        ) {
+          setCustomerMemory(
+            memoryData.memory,
+          );
+
+          customerMemoryRef.current =
+            memoryData.memory;
         }
       } catch (error) {
         console.error(
-          'Sales intelligence error:',
+          '[SalesPilot] Sales intelligence error:',
           error,
         );
       }
     };
 
-    const timeout = setTimeout(
-      analyzeSalesConversation,
-      1200,
-    );
+  const timeout = setTimeout(
+    analyzeSalesConversation,
+    1200,
+  );
 
-    return () => clearTimeout(timeout);
-  }, [messageList, customerId]);
+  return () =>
+    clearTimeout(timeout);
+}, [
+  messageList,
+  customerId,
+]);
 
   usePublish([localMicrophoneTrack]);
 
@@ -871,23 +1086,98 @@ export default function ConversationComponent({
           }
         />
       }
+
       pipelineMetrics={
         <QuickstartPipelineMetrics
           metrics={agentMetrics}
         />
       }
+
       salesIntelligence={
         <div className="flex min-h-0 flex-col gap-4">
           <SalesIntelligencePanel
-  intelligence={salesIntelligence}
-  customerId={customerId}
-/>
+            intelligence={
+              salesIntelligence
+            }
+            customerId={customerId}
+          />
 
           <CustomerMemoryPanel
             memory={customerMemory}
           />
+
+          {agenticResult && (
+            <div className="rounded-xl border border-border bg-card/80 p-4 shadow-sm">
+              <div className="mb-3 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold">
+                    Agentic Decision Engine
+                  </p>
+
+                  <p className="text-xs text-muted-foreground">
+                    Observe → Decide → Act → Verify → Re-plan
+                  </p>
+                </div>
+
+                <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                  Adaptive
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="rounded-lg bg-muted/50 p-2">
+                  <p className="text-muted-foreground">
+                    Goal
+                  </p>
+                  <p className="font-semibold">
+                    {agenticResult.decision.goal}
+                  </p>
+                </div>
+
+                <div className="rounded-lg bg-muted/50 p-2">
+                  <p className="text-muted-foreground">
+                    Strategy
+                  </p>
+                  <p className="font-semibold">
+                    {agenticResult.decision.strategy}
+                  </p>
+                </div>
+
+                <div className="rounded-lg bg-muted/50 p-2">
+                  <p className="text-muted-foreground">
+                    Tool
+                  </p>
+                  <p className="font-semibold">
+                    {agenticResult.decision.selectedTool ??
+                      'CONVERSATIONAL'}
+                  </p>
+                </div>
+
+                <div className="rounded-lg bg-muted/50 p-2">
+                  <p className="text-muted-foreground">
+                    Action
+                  </p>
+                  <p className="font-semibold">
+                    {agenticResult.action.status}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 rounded-lg border border-border/60 bg-background/50 p-3">
+                <p className="text-[11px] font-medium text-muted-foreground">
+                  Re-plan
+                </p>
+
+                <p className="mt-1 text-xs font-medium">
+                  {agenticResult.replan.nextAction ??
+                    'Continue evaluating customer state.'}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       }
+
       transcriptPanel={
         <QuickstartTranscriptPanel
           messageList={messageList}
@@ -897,6 +1187,7 @@ export default function ConversationComponent({
           agentUID={agentUID}
         />
       }
+
       visualizer={
         <div
           className="relative flex h-full min-h-[20rem] w-full max-w-4xl items-center justify-center"
@@ -918,6 +1209,7 @@ export default function ConversationComponent({
           ))}
         </div>
       }
+
       controls={
         <div
           className="mx-auto flex w-fit items-center gap-3 rounded-full border border-border bg-card/80 px-4 py-2 backdrop-blur-md"
@@ -954,6 +1246,7 @@ export default function ConversationComponent({
           />
         </div>
       }
+
       onEndConversation={
         handleEndConversation
       }

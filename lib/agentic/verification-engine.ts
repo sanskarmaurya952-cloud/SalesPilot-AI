@@ -84,7 +84,11 @@ function verifyProductKnowledge(
 ): VerificationResult {
   const status = action.result?.status;
 
-  if (status === 'READY') {
+  if (
+    status === 'READY' ||
+    status === 'SUCCESS' ||
+    status === 'AVAILABLE'
+  ) {
     return {
       verified: true,
       outcome:
@@ -96,6 +100,8 @@ function verifyProductKnowledge(
     verified: false,
     outcome:
       'Product knowledge could not be verified.',
+    reason:
+      'The product knowledge tool did not return a recognized success state.',
   };
 }
 
@@ -104,18 +110,23 @@ function verifyRoiCalculation(
 ): VerificationResult {
   const status = action.result?.status;
 
-  if (status !== 'CALCULATED') {
+  if (
+    status === 'CALCULATED' ||
+    status === 'SUCCESS'
+  ) {
     return {
-      verified: false,
+      verified: true,
       outcome:
-        'ROI calculation was not completed.',
+        'ROI analysis was successfully calculated.',
     };
   }
 
   return {
-    verified: true,
+    verified: false,
     outcome:
-      'ROI analysis was successfully calculated.',
+      'ROI calculation was not completed.',
+    reason:
+      'The ROI tool did not return a recognized success state.',
   };
 }
 
@@ -124,7 +135,11 @@ function verifyCrmAnalysis(
 ): VerificationResult {
   const status = action.result?.status;
 
-  if (status === 'READY') {
+  if (
+    status === 'READY' ||
+    status === 'SUCCESS' ||
+    status === 'AVAILABLE'
+  ) {
     return {
       verified: true,
       outcome:
@@ -136,6 +151,8 @@ function verifyCrmAnalysis(
     verified: false,
     outcome:
       'CRM analysis could not be verified.',
+    reason:
+      'The CRM tool did not return a recognized success state.',
   };
 }
 
@@ -144,11 +161,24 @@ function verifyCalendarAction(
 ): VerificationResult {
   const status = action.result?.status;
 
-  if (status === 'READY') {
+  /*
+   * Calendar actions can be successfully initiated without
+   * being fully completed. INITIATED is therefore a valid
+   * verification state for the current MVP flow.
+   */
+  if (
+    status === 'READY' ||
+    status === 'INITIATED' ||
+    status === 'SUCCESS' ||
+    status === 'BOOKED' ||
+    status === 'SCHEDULED'
+  ) {
     return {
       verified: true,
       outcome:
-        'Calendar action is ready for execution.',
+        status === 'INITIATED'
+          ? 'Calendar booking action was successfully initiated.'
+          : 'Calendar action was successfully verified.',
     };
   }
 
@@ -156,6 +186,8 @@ function verifyCalendarAction(
     verified: false,
     outcome:
       'Calendar action could not be verified.',
+    reason:
+      'The calendar tool did not return a recognized success state.',
   };
 }
 
@@ -164,7 +196,12 @@ function verifyFollowUpAction(
 ): VerificationResult {
   const status = action.result?.status;
 
-  if (status === 'READY') {
+  if (
+    status === 'READY' ||
+    status === 'SUCCESS' ||
+    status === 'SENT' ||
+    status === 'SCHEDULED'
+  ) {
     return {
       verified: true,
       outcome:
@@ -176,5 +213,7 @@ function verifyFollowUpAction(
     verified: false,
     outcome:
       'Follow-up action could not be verified.',
+    reason:
+      'The follow-up tool did not return a recognized success state.',
   };
 }

@@ -40,7 +40,9 @@ function createBaseAction(
     customerId: state.customerId,
     goal: decision.goal,
     strategy: decision.strategy,
-    tool: decision.selectedTool ?? 'PRODUCT_KNOWLEDGE',
+    tool:
+      decision.selectedTool ??
+      'PRODUCT_KNOWLEDGE',
     action: decision.action,
     status: 'EXECUTING',
     createdAt: new Date().toISOString(),
@@ -54,7 +56,10 @@ export async function executeSalesAction({
   state: CustomerState;
   decision: AgenticDecision;
 }): Promise<AgentAction> {
-  const action = createBaseAction(state, decision);
+  const action = createBaseAction(
+    state,
+    decision,
+  );
 
   try {
     /*
@@ -67,47 +72,51 @@ export async function executeSalesAction({
       decision.goal === 'BOOK_DEMO' &&
       decision.selectedTool === 'CALENDAR'
     ) {
-      const actionKey = createActionKey(state, decision);
+      const actionKey =
+        createActionKey(state, decision);
 
-      /*
-       * If this exact customer request was already processed,
-       * don't fire another booking request.
-       */
-      if (executedActionKeys.has(actionKey)) {
+      if (
+        executedActionKeys.has(actionKey)
+      ) {
         return {
           ...action,
-          status: 'VERIFIED',
+          status: 'SUCCESS',
           result: {
             type: 'BOOK_DEMO',
+            status: 'INITIATED',
             deduplicated: true,
             message:
               'Demo booking was already initiated for this customer request.',
           },
-          verification: {
-            verified: true,
-            outcome: 'Demo booking already initiated.',
-            reason:
-              'Duplicate action prevented for the same customer request.',
-          },
-          completedAt: new Date().toISOString(),
+          completedAt:
+            new Date().toISOString(),
         };
       }
 
       executedActionKeys.add(actionKey);
 
-      const response = await fetch('/api/actions/book-demo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        '/api/actions/book-demo',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+          body: JSON.stringify({
+            customerId:
+              state.customerId,
+            customerName:
+              state.name,
+            company:
+              state.company,
+            leadScore:
+              state.leadScore,
+            buyingStage:
+              state.buyingStage,
+          }),
         },
-        body: JSON.stringify({
-          customerId: state.customerId,
-          customerName: state.name,
-          company: state.company,
-          leadScore: state.leadScore,
-          buyingStage: state.buyingStage,
-        }),
-      });
+      );
 
       let data: BookDemoResponse = {};
 
@@ -117,19 +126,26 @@ export async function executeSalesAction({
         data = {};
       }
 
-      if (!response.ok || data.success !== true) {
-        executedActionKeys.delete(actionKey);
+      if (
+        !response.ok ||
+        data.success !== true
+      ) {
+        executedActionKeys.delete(
+          actionKey,
+        );
 
         return {
           ...action,
           status: 'FAILED',
           result: {
             type: 'BOOK_DEMO',
+            status: 'FAILED',
             error:
               data.error ??
               'Demo booking API returned an unsuccessful response.',
           },
-          completedAt: new Date().toISOString(),
+          completedAt:
+            new Date().toISOString(),
         };
       }
 
@@ -138,12 +154,14 @@ export async function executeSalesAction({
         status: 'SUCCESS',
         result: {
           type: 'BOOK_DEMO',
+          status: 'INITIATED',
           ...(data.action ?? {}),
           message:
             data.message ??
             'Demo booking initiated successfully.',
         },
-        completedAt: new Date().toISOString(),
+        completedAt:
+          new Date().toISOString(),
       };
     }
 
@@ -153,17 +171,23 @@ export async function executeSalesAction({
      * ============================================================
      */
 
-    if (decision.selectedTool === 'PRODUCT_KNOWLEDGE') {
+    if (
+      decision.selectedTool ===
+      'PRODUCT_KNOWLEDGE'
+    ) {
       return {
         ...action,
         status: 'SUCCESS',
         result: {
           type: 'PRODUCT_KNOWLEDGE',
+          status: 'READY',
           action:
             'Retrieve relevant product information and explain it conversationally.',
-          customerNeed: state.needs,
+          customerNeed:
+            state.needs,
         },
-        completedAt: new Date().toISOString(),
+        completedAt:
+          new Date().toISOString(),
       };
     }
 
@@ -173,18 +197,25 @@ export async function executeSalesAction({
      * ============================================================
      */
 
-    if (decision.selectedTool === 'ROI_CALCULATOR') {
+    if (
+      decision.selectedTool ===
+      'ROI_CALCULATOR'
+    ) {
       return {
         ...action,
         status: 'SUCCESS',
         result: {
           type: 'ROI_CALCULATOR',
+          status: 'CALCULATED',
           action:
             'Estimate business value and ROI using the customer context.',
-          budget: state.budget ?? null,
-          needs: state.needs,
+          budget:
+            state.budget ?? null,
+          needs:
+            state.needs,
         },
-        completedAt: new Date().toISOString(),
+        completedAt:
+          new Date().toISOString(),
       };
     }
 
@@ -194,18 +225,25 @@ export async function executeSalesAction({
      * ============================================================
      */
 
-    if (decision.selectedTool === 'CRM') {
+    if (
+      decision.selectedTool === 'CRM'
+    ) {
       return {
         ...action,
         status: 'SUCCESS',
         result: {
           type: 'CRM',
+          status: 'READY',
           action:
             'Analyze the customer’s existing CRM situation and identify gaps.',
-          company: state.company ?? null,
-          currentSituation: state.lastCustomerMessage ?? null,
+          company:
+            state.company ?? null,
+          currentSituation:
+            state.lastCustomerMessage ??
+            null,
         },
-        completedAt: new Date().toISOString(),
+        completedAt:
+          new Date().toISOString(),
       };
     }
 
@@ -215,18 +253,25 @@ export async function executeSalesAction({
      * ============================================================
      */
 
-    if (decision.selectedTool === 'FOLLOW_UP') {
+    if (
+      decision.selectedTool ===
+      'FOLLOW_UP'
+    ) {
       return {
         ...action,
         status: 'SUCCESS',
         result: {
           type: 'FOLLOW_UP',
+          status: 'READY',
           action:
             'Prepare a personalized follow-up based on the current customer state.',
-          customerId: state.customerId,
-          buyingStage: state.buyingStage,
+          customerId:
+            state.customerId,
+          buyingStage:
+            state.buyingStage,
         },
-        completedAt: new Date().toISOString(),
+        completedAt:
+          new Date().toISOString(),
       };
     }
 
@@ -236,18 +281,25 @@ export async function executeSalesAction({
      * ============================================================
      */
 
-    if (decision.selectedTool === 'CALENDAR') {
+    if (
+      decision.selectedTool ===
+      'CALENDAR'
+    ) {
       return {
         ...action,
         status: 'SUCCESS',
         result: {
           type: 'CALENDAR',
+          status: 'READY',
           action:
             'Prepare the next calendar-based conversion step.',
-          customerId: state.customerId,
-          buyingStage: state.buyingStage,
+          customerId:
+            state.customerId,
+          buyingStage:
+            state.buyingStage,
         },
-        completedAt: new Date().toISOString(),
+        completedAt:
+          new Date().toISOString(),
       };
     }
 
@@ -259,16 +311,21 @@ export async function executeSalesAction({
 
     return {
       ...action,
-      tool: (decision.selectedTool ?? 'PRODUCT_KNOWLEDGE') as SalesTool,
+      tool:
+        (decision.selectedTool ??
+          'PRODUCT_KNOWLEDGE') as SalesTool,
       status: 'SUCCESS',
       result: {
         type: 'CONVERSATIONAL',
+        status: 'READY',
         action:
           'Continue the conversation using the selected sales strategy.',
         goal: decision.goal,
-        strategy: decision.strategy,
+        strategy:
+          decision.strategy,
       },
-      completedAt: new Date().toISOString(),
+      completedAt:
+        new Date().toISOString(),
     };
   } catch (error) {
     console.error(
@@ -280,12 +337,15 @@ export async function executeSalesAction({
       ...action,
       status: 'FAILED',
       result: {
+        type: 'ACTION_ERROR',
+        status: 'FAILED',
         error:
           error instanceof Error
             ? error.message
             : 'Unknown action execution error.',
       },
-      completedAt: new Date().toISOString(),
+      completedAt:
+        new Date().toISOString(),
     };
   }
 }

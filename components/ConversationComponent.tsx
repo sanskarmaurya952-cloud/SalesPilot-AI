@@ -33,6 +33,7 @@ import { DEFAULT_AGENT_UID } from '@/lib/agora';
 
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
 import { CustomerMemoryPanel } from './CustomerMemoryPanel';
+import { AgenticDecisionPanel } from './AgenticDecisionPanel';
 
 import {
   getCurrentInProgressMessage,
@@ -63,6 +64,7 @@ import type { ConversationComponentProps } from '@/types/conversation';
 
 import { runAgenticLoop } from '@/lib/agentic/agentic-loop';
 import type { AgenticLoopResult } from '@/lib/agentic/agentic-loop';
+
 
 const MAX_CONNECTION_ISSUES = 6;
 
@@ -582,7 +584,13 @@ console.log(
   '[SalesPilot DEBUG] Customer ID:',
   customerId,
 );
-
+console.log(
+  '[SalesPilot DEBUG] Transcript UIDs:',
+  messageList.map((m) => ({
+    uid: String(m.uid),
+    text: m.text,
+  })),
+);
 console.log(
   '[SalesPilot DEBUG] Message list:',
   messageList,
@@ -1094,89 +1102,22 @@ console.log(
       }
 
       salesIntelligence={
-        <div className="flex min-h-0 flex-col gap-4">
-          <SalesIntelligencePanel
-            intelligence={
-              salesIntelligence
-            }
-            customerId={customerId}
-          />
+  <div className="flex min-h-0 flex-col gap-4">
+    <SalesIntelligencePanel
+      intelligence={salesIntelligence}
+      customerId={customerId}
+    />
 
-          <CustomerMemoryPanel
-            memory={customerMemory}
-          />
-
-          {agenticResult && (
-            <div className="rounded-xl border border-border bg-card/80 p-4 shadow-sm">
-              <div className="mb-3 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold">
-                    Agentic Decision Engine
-                  </p>
-
-                  <p className="text-xs text-muted-foreground">
-                    Observe → Decide → Act → Verify → Re-plan
-                  </p>
-                </div>
-
-                <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
-                  Adaptive
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="rounded-lg bg-muted/50 p-2">
-                  <p className="text-muted-foreground">
-                    Goal
-                  </p>
-                  <p className="font-semibold">
-                    {agenticResult.decision.goal}
-                  </p>
-                </div>
-
-                <div className="rounded-lg bg-muted/50 p-2">
-                  <p className="text-muted-foreground">
-                    Strategy
-                  </p>
-                  <p className="font-semibold">
-                    {agenticResult.decision.strategy}
-                  </p>
-                </div>
-
-                <div className="rounded-lg bg-muted/50 p-2">
-                  <p className="text-muted-foreground">
-                    Tool
-                  </p>
-                  <p className="font-semibold">
-                    {agenticResult.decision.selectedTool ??
-                      'CONVERSATIONAL'}
-                  </p>
-                </div>
-
-                <div className="rounded-lg bg-muted/50 p-2">
-                  <p className="text-muted-foreground">
-                    Action
-                  </p>
-                  <p className="font-semibold">
-                    {agenticResult.action.status}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-3 rounded-lg border border-border/60 bg-background/50 p-3">
-                <p className="text-[11px] font-medium text-muted-foreground">
-                  Re-plan
-                </p>
-
-                <p className="mt-1 text-xs font-medium">
-                  {agenticResult.replan.nextAction ??
-                    'Continue evaluating customer state.'}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      }
+    <CustomerMemoryPanel
+      memory={customerMemory}
+    />
+  </div>
+}
+agenticEngine={
+  <AgenticDecisionPanel
+    result={agenticResult}
+  />
+}
 
       transcriptPanel={
         <QuickstartTranscriptPanel

@@ -27,8 +27,8 @@ import {
   type UserTranscription,
   type AgentTranscription,
 } from 'agora-agent-client-toolkit';
-import { AgentVisualizer } from 'agora-agent-uikit';
-import { MicButtonWithVisualizer } from 'agora-agent-uikit/rtc';
+//import { AgentVisualizer } from 'agora-agent-uikit';
+//import { MicButtonWithVisualizer } from 'agora-agent-uikit/rtc';
 import { DEFAULT_AGENT_UID } from '@/lib/agora';
 
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
@@ -64,6 +64,7 @@ import type { ConversationComponentProps } from '@/types/conversation';
 
 import { runAgenticLoop } from '@/lib/agentic/agentic-loop';
 import type { AgenticLoopResult } from '@/lib/agentic/agentic-loop';
+import { SalesPilotOrb } from "./SalesPilotOrb";
 
 
 const MAX_CONNECTION_ISSUES = 6;
@@ -1135,11 +1136,7 @@ agenticEngine={
           role="region"
           aria-label="AI agent status visualization"
         >
-          <AgentVisualizer
-            state={visualizerState}
-            size="lg"
-          />
-
+          <SalesPilotOrb />
           {remoteUsers.map((user) => (
             <div
               key={user.uid}
@@ -1152,32 +1149,32 @@ agenticEngine={
       }
 
       controls={
-        <div
-          className="mx-auto flex w-fit items-center gap-3 rounded-full border border-border bg-card/80 px-4 py-2 backdrop-blur-md"
-          role="group"
-          aria-label="Audio controls"
-        >
+  <div
+    className="mx-auto mt-8 flex w-fit items-center gap-3 rounded-full border border-border bg-card/80 px-4 py-2 backdrop-blur-md"
+    role="group"
+    aria-label="Audio controls"
+  >
           <div className="conversation-mic-host flex items-center justify-center">
-            <MicButtonWithVisualizer
-              isEnabled={isEnabled}
-              setIsEnabled={
-                setIsEnabled
-              }
-              track={
-                localMicrophoneTrack
-              }
-              onToggle={
-                handleMicToggle
-              }
-              className="overflow-visible"
-              aria-label={
-                isEnabled
-                  ? 'Mute microphone'
-                  : 'Unmute microphone'
-              }
-              enabledColor="hsl(var(--primary))"
-              disabledColor="hsl(var(--destructive))"
-            />
+          <button
+  type="button"
+  onClick={handleMicToggle}
+  className={`relative flex h-16 w-16 items-center justify-center rounded-full border transition-all duration-300 ${
+    isEnabled
+      ? "border-cyan-200 bg-white shadow-[0_0_25px_rgba(34,211,238,0.18)]"
+      : "border-red-200 bg-red-50 shadow-[0_0_25px_rgba(239,68,68,0.15)]"
+  }`}
+  aria-label={isEnabled ? "Mute microphone" : "Unmute microphone"}
+>
+  <span className="text-xl">
+    {isEnabled ? "🎙️" : "🔇"}
+  </span>
+
+  <span
+    className={`absolute right-1 top-1 h-3 w-3 rounded-full border-2 border-white ${
+      isEnabled ? "bg-emerald-400" : "bg-red-500"
+    }`}
+  />
+</button>
           </div>
 
           <MicrophoneSelector

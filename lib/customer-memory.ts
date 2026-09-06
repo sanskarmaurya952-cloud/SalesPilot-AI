@@ -32,20 +32,22 @@ type CustomerMemoryRow = {
   updated_at: string;
 };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabasePublishableKey =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+function getSupabase() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabasePublishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-if (!supabaseUrl || !supabasePublishableKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.',
+  if (!supabaseUrl || !supabasePublishableKey) {
+    throw new Error(
+      'Missing Supabase environment variables. Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.',
+    );
+  }
+
+  return createClient(
+    supabaseUrl,
+    supabasePublishableKey,
   );
 }
-
-const supabase = createClient(
-  supabaseUrl,
-  supabasePublishableKey,
-);
 
 function createEmptyMemory(customerId: string): CustomerMemory {
   return {
@@ -79,7 +81,7 @@ function rowToMemory(row: CustomerMemoryRow): CustomerMemory {
 export async function getCustomerMemory(
   customerId: string,
 ): Promise<CustomerMemory> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('customer_memory')
     .select('*')
     .eq('customer_id', customerId)
@@ -97,7 +99,7 @@ export async function getCustomerMemory(
     const emptyMemory = createEmptyMemory(customerId);
 
     const { data: createdData, error: createError } =
-      await supabase
+      await getSupabase()
         .from('customer_memory')
         .insert({
           customer_id: customerId,
@@ -174,7 +176,7 @@ export async function updateCustomerMemory(
     updatedAt: new Date().toISOString(),
   };
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('customer_memory')
     .upsert(
       {
@@ -240,7 +242,7 @@ export async function addCustomerNote(
 export async function clearCustomerMemory(
   customerId: string,
 ): Promise<void> {
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from('customer_memory')
     .delete()
     .eq('customer_id', customerId);
